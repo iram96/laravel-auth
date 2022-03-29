@@ -40,11 +40,23 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string|unique:posts|max:30',
+            'post_content' => 'string',
+            'image' => 'string|nullable',
+            'slug' => 'string|unique:posts'
+        ], [
+            'required' => 'Il campo :attribute è obbligatorio',
+            'title.max' => 'Il titolo super i :attribute caratteri',
+            'unique' => "Il post $request->title è già presente"
+        ]);
+
 
         $data = $request->all();
-
+        
         $post = new Post();
         $post->fill($data);
+        $post->slug = $post->title;
         $post->save();
 
         return redirect()->route('admin.posts.show', $post);

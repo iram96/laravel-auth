@@ -2,6 +2,11 @@
 
 @section('content')
 
+<div class="container d-flex justify-content-end">
+
+<a href="{{ route('admin.posts.create')}}" class="btn btn-success"> <i class="fas fa-plus"></i></a>
+</div>
+
 <div class="container">
     <table class="mx-auto">
         <tr class="row">
@@ -17,7 +22,15 @@
             <td class="col"> {{ $post->updated_at}}</td>
             <td class="col"> 
                 <a href="{{ route('admin.posts.show', $post)}}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
-                
+                <form action="{{ route('admin.posts.destroy', $post)}}" method="POST" >
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                {{-- <form action="{{ route('admin.posts.edit', $post)}}" method="POST"></form> --}}
+                <a href="{{ route('admin.posts.edit', $post->id)}}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
             </td>
         </tr>
             

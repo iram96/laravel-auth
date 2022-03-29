@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -15,7 +16,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::all();
+        return view( 'admin.posts.index', compact('posts'));
     }
 
     /**
@@ -25,8 +27,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        
         $post = new Post();
+        return view('admin.posts.create', compact('post'));
     }
 
     /**
@@ -37,7 +40,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $data = $request->all();
+
+        $post = new Post();
+        $post->fill($data);
+        $post->save();
+
+        return redirect()->route('admin.posts.show', $post);
+        
     }
 
     /**
@@ -46,9 +57,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
-        //
+        
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -57,9 +69,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -69,9 +81,25 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([
+            'title' => [ 'required', 'string', Rule::unique('posts')->ignore($post->id), 'max:30'],
+            'post_content' => 'text',
+            'image' => 'string|nullable',
+            'slug' => [ 'string', Rule::unique('posts')->ignore($post->id)]
+        ], [
+            'required' => 'Il campo :attribute è obbligatorio',
+            'title.max' => 'Il titolo super i :attribute caratteri',
+            'unique' => "Il post $request->title è già presente"
+        ]);
+
+        $data = $request->all();
+
+        
+        $post->fill($data);
+        $post->save();
+        return redirect()->route('admin.posts.show', $post);
     }
 
     /**
@@ -80,8 +108,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('admin.posts.index');
     }
 }

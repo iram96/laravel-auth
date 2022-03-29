@@ -22,7 +22,7 @@
             <td class="col"> {{ $post->updated_at}}</td>
             <td class="col"> 
                 <a href="{{ route('admin.posts.show', $post)}}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
-                <form action="{{ route('admin.posts.destroy', $post)}}" method="POST" >
+                <form action="{{ route('admin.posts.destroy', $post)}}" method="POST" class="delete-forms" >
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
@@ -37,5 +37,11 @@
         @endforeach
     </table>
 </div>
+    
+@endsection
+
+@section('scripts')
+
+<script src="{{ asset('js/alertDelete.js') }}" defer></script>
     
 @endsection
